@@ -148,7 +148,7 @@ class Register_model extends CI_Model{
 			$binary_data = base64_decode( $encoded_data );
 
 			// save to server (beware of permissions)
-			$result = file_put_contents("C:/wamp/www/health4all/assets/images/patients/$patient_id.jpg", $binary_data );
+			$result = file_put_contents("assets/images/patients/$patient_id.jpg", $binary_data );
 			if (!$result) die("Could not save image!  Check file permissions.");
 		}
 		//Creating an array with the database column names as keys and the post values as values. 
@@ -534,7 +534,7 @@ class Register_model extends CI_Model{
 		//Build the query to retrieve the patient records based on the search query.
 		$this->db->select("patient.*,patient_visit.*,CONCAT(first_name,' ',last_name) name,
 		IF(father_name IS NULL OR father_name='',spouse_name,father_name) parent_spouse,patient.*,patient_visit.*,mlc.*,
-		area_name,unit_name,unit.unit_id,area.area_id,district,department,patient.patient_id,patient_visit.visit_id",false)
+		area_name,unit_name,unit.unit_id,code_title,area.area_id,district,department,patient.patient_id,patient_visit.visit_id",false)
 		->from('patient')
 		->join('patient_visit','patient.patient_id=patient_visit.patient_id')
 		->join('department','patient_visit.department_id=department.department_id','left')
@@ -542,6 +542,7 @@ class Register_model extends CI_Model{
 		->join('unit','patient_visit.unit=unit.unit_id','left')
 		->join('area','patient_visit.area=area.area_id','left')
 		->join('mlc','patient_visit.visit_id=mlc.visit_id','left')
+		->join('icd_code','patient_visit.icd_10=icd_code.icd_code','left')
 		->order_by('name','ASC');
 		$query=$this->db->get();
 		//return the search results
